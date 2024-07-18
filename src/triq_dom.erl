@@ -1145,14 +1145,14 @@ sample(Dom) ->
 %%-------------------------------------------------------------------
 -spec seal(Dom::domain(T)) -> domrec(box(T)).
 seal(Dom) ->
-    Seed = rand:seed(),
-    rand:seed(Seed),
-    #?DOM{kind=#seal{dom=Dom,seed=Seed}, pick=fun seal_pick/2}.
+    State = rand:export_seed(),
+    rand:seed(State),
+    #?DOM{kind=#seal{dom=Dom,seed=State}, pick=fun seal_pick/2}.
 
-seal_pick(#?DOM{kind=#seal{dom=Dom,seed=Seed}}, SampleSize) ->
-    OldSeed = rand:seed(Seed),
+seal_pick(#?DOM{kind=#seal{dom=Dom,seed=State}}, SampleSize) ->
+    OldState = rand:seed_s(State),
     {BoxDom,BoxValue} = pick(Dom,SampleSize),
-    rand:seed(OldSeed),
+    rand:seed_s(OldState),
     #?BOX{dom=BoxDom,value=BoxValue}.
 
 %%-------------------------------------------------------------------

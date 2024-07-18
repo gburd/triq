@@ -167,8 +167,8 @@ check_input(Fun,Input,IDom,#triq{count=Count,report=DoReport}=QCT) ->
             {failure, Fun, Input, IDom, QCT#triq{count=Count+1,result=Any}}
 
     catch
-        Class : Exception : Stacktrace ->
-            DoReport(fail, {Class, Exception, Stacktrace}),
+        Class : Exception ->
+            try throw(42) catch _:_:Stk -> DoReport(fail, {Class, Exception, Stk}) end,
             {failure, Fun, Input, IDom, QCT#triq{count=Count+1,
                                                  result={'EXIT',Exception}}}
 
@@ -466,4 +466,4 @@ numtests(Num,Prop) ->
 %%
 generate_randomness() ->
     <<A:32, B:32, C:32>> = crypto:strong_rand_bytes(12),
-    rand:seed({A, B, C}).
+    rand:seed(exsplus, {A, B, C}).
